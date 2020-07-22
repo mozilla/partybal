@@ -15,6 +15,7 @@ import click
 import dateutil.parser
 from dateutil.tz import UTC
 from jinja2 import Environment, FileSystemLoader
+import pandas as pd
 
 jinja = Environment(loader=FileSystemLoader("."))
 
@@ -135,9 +136,14 @@ class ExperimentCollection:
 
 
 ## Result summaries
-@attr.s(auto_attribs=True)
 class Result:
-    pass
+    def __init__(self, path):
+        self.df = pd.read_json(path)
+
+    @property
+    def metrics(self):
+        return list(self.df.metrics.unique())
+
 
 @attr.s(auto_attribs=True)
 class ResultSet:
