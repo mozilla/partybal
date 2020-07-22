@@ -112,7 +112,7 @@ class Experiment:
         return v.slug
 
     def render(self):
-        return jinja.get_template("template.Rmd").render(experiment=self)
+        return jinja.get_template("template.Rmd.jinja2").render(experiment=self)
 
 
 @attr.s(auto_attribs=True)
