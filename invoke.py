@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from datetime import datetime
+import json
 import os
 from pathlib import Path
 import requests
@@ -24,6 +25,7 @@ class Cache:
     TIMESTAMP_FILENAME = "last_run"
     RESULT_CACHE_PATH = "results"
     EXPERIMENT_BUCKET_URL = "gs://mozanalysis"
+    EXPERIMENTS_FILENAME = "experiments.json"
 
     def __init__(self, path=None):
         self.path = Path(path or appdirs.user_cache_dir("partybal", "Mozilla"))
@@ -70,6 +72,9 @@ class Cache:
         if result.returncode:
             raise Exception(result.stdout)
 
+        experiments = cattr.unstructure(ExperimentCollection.from_experimenter())
+        (self.path / self.EXPERIMENTS_FILENAME).write_text(json.dumps(experiments))
+
     def clean(self) -> None:
         shutil.rmtree(self.path)
 
@@ -81,6 +86,12 @@ class Cache:
             if datetime.fromtimestamp(mtime, UTC) > last_run:
                 results.append(p)
         return results
+
+    @property
+    def experiments(self) -> "ExperimentCollection":
+        serialized = (self.path / self.EXPERIMENTS_FILENAME).read_text()
+        deserialized = json.loads(serialized)
+        return cattr.structure(deserialized, ExperimentCollection)
 
 
 ## Experimenter API types
@@ -181,7 +192,7 @@ def invoke():
     to_analyze = {slug_from_filename(p) for p in cache.new_since_last_run()}
     to_analyze.discard(None)
 
-    experiments = ExperimentCollection.from_experimenter()
+    experiments = cache.experiments
 
     for slug in to_analyze:
         render(experiments[slug], cache.path)
