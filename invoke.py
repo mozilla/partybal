@@ -3,7 +3,6 @@
 from datetime import datetime
 import os
 from pathlib import Path
-from pprint import pprint
 import requests
 import shutil
 import subprocess
@@ -85,6 +84,7 @@ class Cache:
 
 ## Experimenter API types
 
+
 @attr.s(auto_attribs=True)
 class Variant:
     slug: str
@@ -101,12 +101,12 @@ class Experiment:
 
     @property
     def branches(self) -> List[str]:
-        return sort(v.slug for v in self.variants)
+        return sorted(v.slug for v in self.variants)
 
     @property
     def control_branch_slug(self) -> str:
         for v in self.variants:
-            if is_control:
+            if v.is_control:
                 break
         return v.slug
 
@@ -144,7 +144,7 @@ class ResultSet:
     slug: str
     path: Path
 
-    def get_result(period: str) -> Optional[Result]:
+    def get_result(self, period: str) -> Optional[Result]:
         assert period in ("daily", "weekly", "overall")
         filename = self.path / f"statistics_{self.slug}_{period}.json"
         if filename.exists():
@@ -153,7 +153,6 @@ class ResultSet:
 
 
 ## Helpers
-
 def slug_from_filename(path: Path) -> Optional[str]:
     if not path.suffix.endswith("json"):
         return None
