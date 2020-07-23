@@ -47,6 +47,46 @@ plot_{{statistic.name}}(period, "{{metric.name}}", "{{comparison}}")
 ```{r}
 overall <- load_table("{{results.overall.path}}")
 ```
+
+Statistics with means:
+
+```{r, fig.width=4, fig.height=8}
+overall %>%
+    filter(statistic == "mean", comparison == "difference") %>%
+    ggplot(aes(metric, point, ymin=lower, ymax=upper, color=branch)) +
+        geom_pointrange(position=position_dodge(width=0.2)) +
+        geom_blank(aes(ymin=-upper, ymax=-lower)) +
+        coord_flip() +
+        facet_wrap(~metric, ncol=1, scales="free") +
+        labs(title="Absolute differences in mean ± CI") +
+        geom_hline(yintercept=0) +
+        theme(
+            legend.position="bottom",
+            plot.title.position="plot",
+            legend.direction="vertical",
+            strip.background=element_blank(),
+            strip.text.x=element_blank()
+        )
+```
+```{r, fig.width=4, fig.height=8}
+overall %>%
+    filter(statistic == "mean", comparison == "relative_uplift") %>%
+    ggplot(aes(metric, point, ymin=lower, ymax=upper, color=branch)) +
+        geom_pointrange(position=position_dodge(width=0.2)) +
+        geom_blank(aes(ymin=-upper, ymax=-lower)) +
+        scale_y_continuous(label=scales::percent) +
+        coord_flip() +
+        facet_wrap(~metric, ncol=1, scales="free") +
+        labs(title="Relative differences in mean ± CI") +
+        geom_hline(yintercept=0) +
+        theme(
+            legend.position="bottom",
+            plot.title.position="plot",
+            legend.direction="vertical",
+            strip.background=element_blank(),
+            strip.text.x=element_blank()
+        )
+```
 {% else %}
 Overall results are not available yet.
 {% endif %}
