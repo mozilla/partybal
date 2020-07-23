@@ -15,13 +15,18 @@ library(dplyr)
 library(ggplot2)
 library(jsonlite)
 
+load_table <- function(path) {
+    read_json(path, simplifyDataFrame=TRUE) %>%
+        mutate(window_index=as.integer(window_index))
+}
+
 source("../plot_functions.R")
 ```
 
 {% macro plot_period(name) -%}
 {% set period = results.get_result(name) %}
 ```{r}
-period <- read_json("{{period.path}}", simplifyDataFrame=TRUE)
+period <- load_table("{{period.path}}")
 ```
 
 {% for metric in period.metrics %}
@@ -39,7 +44,9 @@ plot_{{statistic.name}}(period, "{{metric.name}}", "{{comparison}}")
 # Overall
 
 {% if results.overall %}
-{{ results.overall.path }}
+```{r}
+overall <- load_table("{{results.overall.path}}")
+```
 {% else %}
 Overall results are not available yet.
 {% endif %}
