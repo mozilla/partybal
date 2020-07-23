@@ -13,5 +13,49 @@ knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE)
 
 library(dplyr)
 library(ggplot2)
-library(readr)
+library(jsonlite)
+
+source("../plot_functions.R")
 ```
+
+{% macro plot_period(name) -%}
+{% set period = results.get_result(name) %}
+```{r}
+period <- read_json("{{period.path}}", simplifyDataFrame=TRUE)
+```
+
+{% for metric in period.metrics %}
+## {{ metric.name }}
+{% for statistic in metric.statistics %}
+{% for comparison in statistic.comparisons %}
+```{r}
+plot_{{statistic.name}}(period, "{{metric.name}}", "{{comparison}}")
+```
+{% endfor %} {# comparison #}
+{% endfor %} {# statistic #}
+{% endfor %} {# metric #}
+{%- endmacro %}
+
+# Overall
+
+{% if results.overall %}
+{{ results.overall.path }}
+{% else %}
+Overall results are not available yet.
+{% endif %}
+
+# Weekly
+
+{% if results.weekly %}
+{{ plot_period("weekly") }}
+{% else %}
+No weekly results are available yet.
+{% endif %}
+
+# Daily
+
+{% if results.daily %}
+{{ plot_period("daily") }}
+{% else %}
+No daily results are available yet.
+{% endif %}

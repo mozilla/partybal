@@ -7,7 +7,7 @@ from pathlib import Path
 import requests
 import shutil
 import subprocess
-from typing import Dict, List, Optional
+from typing import Dict, Iterable, List, Optional
 
 import appdirs
 import attr
@@ -15,10 +15,10 @@ import cattr
 import click
 import dateutil.parser
 from dateutil.tz import UTC
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment, FileSystemLoader, StrictUndefined
 import pandas as pd
 
-jinja = Environment(loader=FileSystemLoader("."))
+jinja = Environment(loader=FileSystemLoader("."), undefined=StrictUndefined)
 
 
 class Cache:
@@ -122,8 +122,15 @@ class Experiment:
                 break
         return v.slug
 
-    def render(self):
-        return jinja.get_template("template.Rmd.jinja2").render(experiment=self)
+    @property
+    def filename_slug(self) -> str:
+        return self.normandy_slug.replace("-", "_")
+
+    def render(self, cache_path: Path) -> str:
+        results = ResultSet(self.filename_slug, cache_path)
+        return jinja.get_template("template.Rmd.jinja2").render(
+            experiment=self, results=results
+        )
 
 
 @attr.s(auto_attribs=True)
@@ -140,20 +147,43 @@ class ExperimentCollection:
             cattr.structure(e, Experiment)
             for e in requests.get(cls.EXPERIMENTER_API_URL).json()
         ]
-        return cls({x.normandy_slug.replace("-", "_"): x for x in l})
+        return cls({x.filename_slug: x for x in l})
 
     def __getitem__(self, item: str) -> Experiment:
         return self.experiments[item]
 
 
 ## Result summaries
-class Result:
-    def __init__(self, path):
-        self.df = pd.read_json(path)
+@attr.s(auto_attribs=True)
+class ResultStatistic:
+    name: str
+    data: pd.DataFrame
 
     @property
-    def metrics(self):
-        return list(self.df.metrics.unique())
+    def comparisons(self) -> List[str]:
+        return list(self.data.comparison.fillna("none").unique())
+
+
+@attr.s(auto_attribs=True)
+class ResultMetric:
+    name: str
+    data: pd.DataFrame
+
+    @property
+    def statistics(self) -> Iterable[ResultStatistic]:
+        for name, rows in self.data.groupby("statistic"):
+            yield ResultStatistic(name, rows)
+
+
+class Result:
+    def __init__(self, path):
+        self.data = pd.read_json(path)
+        self.path = path
+
+    @property
+    def metrics(self) -> Iterable[ResultMetric]:
+        for name, rows in self.data.groupby("metric"):
+            yield ResultMetric(name, rows)
 
 
 @attr.s(auto_attribs=True)
@@ -161,9 +191,24 @@ class ResultSet:
     slug: str
     path: Path
 
+    @property
+    def overall(self):
+        return self.get_result("overall")
+
+    @property
+    def weekly(self):
+        return self.get_result("weekly")
+
+    @property
+    def daily(self):
+        return self.get_result("daily")
+
     def get_result(self, period: str) -> Optional[Result]:
         assert period in ("daily", "weekly", "overall")
-        filename = self.path / f"statistics_{self.slug}_{period}.json"
+        filename = (
+            self.path
+            / f"{Cache.RESULT_CACHE_PATH}/statistics_{self.slug}_{period}.json"
+        )
         if filename.exists():
             return Result(filename)
         return None
@@ -177,7 +222,7 @@ def slug_from_filename(path: Path) -> Optional[str]:
 
 
 def render(experiment: Experiment, path: Path):
-    print(experiment.render())
+    print(experiment.render(path))
 
 
 @click.group()
@@ -206,12 +251,35 @@ def clean():
 
 @cli.command()
 @click.option("--sync/--no-sync")
+@click.option("--output", default="output")
 @click.argument("slug")
-def debug(sync, slug):
+def debug(sync, output, slug):
     cache = Cache()
     if sync:
         cache.sync()
-    render(slug, cache.path)
+
+    outdir = Path(output)
+    outdir.mkdir(exist_ok=True)
+
+    template = outdir / (slug + ".Rmd")
+    template.write_text(cache.experiments[slug].render(cache.path))
+
+    # Avoid a Conda/Homebrew interaction
+    env = dict(os.environ)
+    env["R_LIBS_USER"] = ""
+
+    subprocess.run(
+        [
+            "R",
+            "--vanilla",
+            "-q",
+            "-s",
+            "-e",
+            f"suppressWarnings(rmarkdown::render('{str(template)}', quiet=TRUE))",
+        ],
+        check=True,
+        env=env,
+    )
 
 
 if __name__ == "__main__":
