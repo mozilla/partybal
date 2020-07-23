@@ -223,48 +223,12 @@ def slug_from_filename(path: Path) -> Optional[str]:
     return path.name.rsplit("_", 1)[0].split("_", 1)[1]
 
 
-def render(experiment: Experiment, path: Path):
-    print(experiment.render(path))
+def render(experiment: Experiment, cache: Cache, output: Path):
+    output.mkdir(exist_ok=True)
 
-
-@click.group()
-def cli():
-    pass
-
-
-@cli.command()
-def invoke():
-    cache = Cache()
-    cache.sync()
-    to_analyze = {slug_from_filename(p) for p in cache.new_since_last_run()}
-    to_analyze.discard(None)
-
-    experiments = cache.experiments
-
-    for slug in to_analyze:
-        render(experiments[slug], cache.path)
-    cache.mark_complete()
-
-
-@cli.command()
-def clean():
-    Cache().clean()
-
-
-@cli.command()
-@click.option("--sync/--no-sync")
-@click.option("--output", default="output")
-@click.argument("slug")
-def debug(sync, output, slug):
-    cache = Cache()
-    if sync:
-        cache.sync()
-
-    outdir = Path(output)
-    outdir.mkdir(exist_ok=True)
-
-    template = outdir / (slug + ".Rmd")
-    template.write_text(cache.experiments[slug].render(cache.path))
+    slug = experiment.filename_slug
+    template = output / (slug + ".Rmd")
+    template.write_text(experiment.render(cache.path))
 
     # Avoid a Conda/Homebrew interaction
     env = dict(os.environ)
@@ -282,6 +246,44 @@ def debug(sync, output, slug):
         check=True,
         env=env,
     )
+
+
+@click.group()
+def cli():
+    pass
+
+
+@cli.command()
+@click.option("--output", default="output")
+def invoke(output):
+    cache = Cache()
+    cache.sync()
+    to_analyze = {slug_from_filename(p) for p in cache.new_since_last_run()}
+    to_analyze.discard(None)
+
+    experiments = cache.experiments
+
+    for slug in to_analyze:
+        render(experiments[slug], cache, Path(output))
+
+    cache.mark_complete()
+
+
+@cli.command()
+def clean():
+    Cache().clean()
+
+
+@cli.command()
+@click.option("--sync/--no-sync")
+@click.option("--output", default="output")
+@click.argument("slug")
+def debug(sync, output, slug):
+    cache = Cache()
+    if sync:
+        cache.sync()
+
+    render(cache.experiments[slug], cache, Path(output))
 
 
 if __name__ == "__main__":
