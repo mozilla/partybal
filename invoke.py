@@ -129,7 +129,9 @@ class Experiment:
     def render(self, cache_path: Path) -> str:
         results = ResultSet(self.filename_slug, cache_path)
         return jinja.get_template("template.Rmd.jinja2").render(
-            experiment=self, results=results
+            experiment=self,
+            results=results,
+            source_path=str(Path(__file__).parent.resolve()),
         )
 
 

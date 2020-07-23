@@ -20,7 +20,7 @@ load_table <- function(path) {
         mutate(window_index=as.integer(window_index))
 }
 
-source("../plot_functions.R")
+source("{{source_path}}/plot_functions.R")
 ```
 
 {% macro plot_period(name) -%}
