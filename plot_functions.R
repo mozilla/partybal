@@ -1,3 +1,11 @@
+integer_breaks = function(x) {
+    if(x[2] - x[1] <= 6) {
+        seq(ceiling(x[1]), floor(x[2]), by = 1)
+    } else {
+        pretty(x, n=6)
+    }
+}
+
 plot_deciles <- function(df, metric, comparison) {
     df <- filter(df, metric == !!metric, statistic == "deciles")
     if(comparison == "none") {
@@ -25,13 +33,15 @@ plot_mean <- function(df, metric, comparison, statistic="mean") {
         g <- ggplot(df, aes(window_index, point, ymin=lower, ymax=upper, group=branch)) +
             geom_line(aes(color=branch)) +
             geom_ribbon(aes(fill=branch), alpha=0.3) +
-            labs(title=metric, x="Window index")
+            labs(title=metric, x="Window index") +
+            scale_x_continuous(breaks=integer_breaks)
     } else {
         df <- filter(df, comparison == !!comparison)
         g <- ggplot(df, aes(window_index, point, ymin=lower, ymax=upper, group=0)) +
             geom_line(aes(color=branch)) +
             geom_ribbon(alpha=0.3) +
-            labs(title=paste0(metric, " (", comparison, ")"), x="Window index")
+            labs(title=paste0(metric, " (", comparison, ")"), x="Window index") +
+            scale_x_continuous(breaks=integer_breaks)
     }
     g
 }
