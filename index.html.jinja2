@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+<head>
+<title>Partybal experiments repository</title>
+<style type="text/css">
+table { border-collapse: collapse; }
+table, th, tr, td { border: thin black solid; }
+</style>
+</head>
+<h1>Experiment analyses</h1>
+<table>
+<thead>
+<tr>
+<th>Launch date</th><th>Name</th><th>Periods available</th>
+</tr>
+</thead>
+<tbody>
+{% for experiment in experiments|sort(attribute="name")|sort(reverse=true, attribute="start_date") %}
+<tr>
+<td>{{experiment.start_date_formatted}}</td>
+<td><a href="{{experiment.filename_slug}}.html">{{experiment.name}}</a></td>
+<td>{{results[experiment.filename_slug].available_code}}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</body>
+</html>

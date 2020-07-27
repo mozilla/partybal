@@ -110,6 +110,7 @@ class Experiment:
     slug: str
     normandy_slug: str
     variants: List[Variant]
+    start_date: Optional[int]
 
     @property
     def branches(self) -> List[str]:
@@ -125,6 +126,12 @@ class Experiment:
     @property
     def filename_slug(self) -> str:
         return self.normandy_slug.replace("-", "_")
+
+    @property
+    def start_date_formatted(self) -> str:
+        if not self.start_date:
+            return "Never"
+        return datetime.fromtimestamp(self.start_date / 1000, UTC).strftime("%Y-%m-%d")
 
     def render(self, cache_path: Path) -> str:
         results = ResultSet(self.filename_slug, cache_path)
@@ -215,6 +222,19 @@ class ResultSet:
             return Result(filename)
         return None
 
+    @property
+    def available_code(self):
+        available = []
+        if self.overall:
+            available.append("O")
+        if self.weekly:
+            n = len(self.weekly.data.window_index.unique())
+            available.append(f"W{n}")
+        if self.daily:
+            n = len(self.daily.data.window_index.unique())
+            available.append(f"D{n}")
+        return " ".join(available)
+
 
 ## Helpers
 def slug_from_filename(path: Path) -> Optional[str]:
@@ -248,6 +268,19 @@ def render(experiment: Experiment, cache: Cache, output: Path):
     )
 
 
+def render_index(experiments, cache) -> str:
+    to_list = {
+        slug_from_filename(p)
+        for p in cache.new_since_last_run(last_run=datetime.min.replace(tzinfo=UTC))
+    }
+    to_list.discard(None)
+    results = {slug: ResultSet(slug, cache.path) for slug in to_list}
+    with_results = [experiments[slug] for slug in to_list]
+    return jinja.get_template("index.html.jinja2").render(
+        experiments=with_results, results=results,
+    )
+
+
 @click.group()
 def cli():
     pass
@@ -263,8 +296,11 @@ def invoke(output):
 
     experiments = cache.experiments
 
+    output = Path(output)
     for slug in to_analyze:
-        render(experiments[slug], cache, Path(output))
+        render(experiments[slug], cache, output)
+
+    (output / "index.html").write_text(render_index(experiments, cache))
 
     cache.mark_complete()
 
@@ -283,7 +319,10 @@ def debug(sync, output, slug):
     if sync:
         cache.sync()
 
-    render(cache.experiments[slug], cache, Path(output))
+    output = Path(output)
+    experiments = cache.experiments
+    render(experiments[slug], cache, output)
+    (output / "index.html").write_text(render_index(experiments, cache))
 
 
 if __name__ == "__main__":
