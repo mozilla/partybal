@@ -38,4 +38,8 @@ plot_mean <- function(df, metric, comparison, statistic="mean") {
 
 plot_binomial <- function(...) { plot_mean(..., "binomial") }
 
-plot_count <- function(...) { }
+plot_count <- function(df, metric, comparison) {
+    filter(df, metric == !!metric) %>%
+        slice_min(window_index, n=1, with_ties=TRUE) %>%
+        select(Branch=branch, Clients=point)
+ }
