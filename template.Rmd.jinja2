@@ -34,7 +34,7 @@ period <- load_table("{{period.path}}")
 {% for statistic in metric.statistics %}
 {% for comparison in statistic.comparisons %}
 ```{r}
-plot_{{statistic.name}}(period, "{{metric.name}}", "{{comparison}}")
+plot_{{statistic.name}}(df=period, metric="{{metric.name}}", comparison="{{comparison}}", period="{{name}}")
 ```
 {% endfor %} {# comparison #}
 {% endfor %} {# statistic #}
