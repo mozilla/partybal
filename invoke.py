@@ -226,16 +226,19 @@ class ResultSet:
 
     @property
     def available_code(self):
-        available = []
-        if self.overall:
-            available.append("O")
-        if self.weekly:
-            n = len(self.weekly.data.window_index.unique())
-            available.append(f"W{n}")
-        if self.daily:
-            n = len(self.daily.data.window_index.unique())
-            available.append(f"D{n}")
-        return " ".join(available)
+        try:
+            available = []
+            if self.overall:
+                available.append("O")
+            if self.weekly:
+                n = len(self.weekly.data.window_index.unique())
+                available.append(f"W{n}")
+            if self.daily:
+                n = len(self.daily.data.window_index.unique())
+                available.append(f"D{n}")
+            return " ".join(available)
+        except Exception:
+            return "None"
 
 
 ## Helpers
@@ -300,7 +303,12 @@ def invoke(output):
 
     output = Path(output)
     for slug in to_analyze:
-        render(experiments[slug], cache, output)
+        print(f"\n\n{slug}")
+        try:
+            render(experiments[slug], cache, output)
+        except Exception as e:
+            print(e)
+            continue
 
     (output / "index.html").write_text(render_index(experiments, cache))
 
