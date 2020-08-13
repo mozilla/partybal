@@ -170,6 +170,8 @@ class ResultStatistic:
 
     @property
     def comparisons(self) -> List[str]:
+        if "comparison" not in self.data.columns:
+            return []
         return list(self.data.comparison.fillna("none").unique())
 
 
