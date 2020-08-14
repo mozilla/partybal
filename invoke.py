@@ -161,6 +161,9 @@ class ExperimentCollection:
     def __getitem__(self, item: str) -> Experiment:
         return self.experiments[item]
 
+    def __contains__(self, item: str) -> bool:
+        return item in self.experiments
+
 
 ## Result summaries
 @attr.s(auto_attribs=True)
@@ -280,7 +283,7 @@ def render_index(experiments, cache) -> str:
     }
     to_list.discard(None)
     results = {slug: ResultSet(slug, cache.path) for slug in to_list}
-    with_results = [experiments[slug] for slug in to_list]
+    with_results = [experiments[slug] for slug in to_list if slug in experiments]
     return jinja.get_template("index.html.jinja2").render(
         experiments=with_results, results=results,
     )
@@ -303,6 +306,8 @@ def invoke(output):
 
     output = Path(output)
     for slug in to_analyze:
+        if slug not in experiments:
+            continue
         print(f"\n\n{slug}")
         try:
             render(experiments[slug], cache, output)
