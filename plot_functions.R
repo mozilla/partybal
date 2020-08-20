@@ -60,7 +60,7 @@ plot_mean <- function(df, metric, comparison, period, statistic="mean") {
         df <- filter(df, is.na(comparison))
         g <- ggplot(df, aes(window_index, point, ymin=lower, ymax=upper, group=branch)) +
             point_repr +
-            geom_ribbon(aes(color=branch), alpha=0.3) +
+            geom_ribbon(aes(fill=branch), alpha=0.3) +
             labs(title=metric, x=index_label(period))
     } else {
         df <- filter(df, comparison == !!comparison)
