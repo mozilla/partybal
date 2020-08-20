@@ -42,20 +42,34 @@ plot_deciles <- function(df, metric, comparison, period) {
 
 plot_mean <- function(df, metric, comparison, period, statistic="mean") {
     df <- filter(df, metric == !!metric, statistic == !!statistic)
+
+    point_repr <- if(length(unique(df$window_index)) == 1) {
+            list(
+                geom_point(aes(color=branch), position=position_dodge(width=0.05)),
+                geom_errorbar(aes(color=branch), position=position_dodge(width=0.05), width=0.03),
+                scale_x_continuous(breaks=integer_breaks, limits=c(0.6, 1.4))
+            )
+        } else {
+            list(
+                geom_line(aes(color=branch)),
+                scale_x_continuous(breaks=integer_breaks)
+            )
+        }
+
     if(comparison == "none") {
         df <- filter(df, is.na(comparison))
         g <- ggplot(df, aes(window_index, point, ymin=lower, ymax=upper, group=branch)) +
-            geom_line(aes(color=branch)) +
-            geom_ribbon(aes(fill=branch), alpha=0.3) +
-            labs(title=metric, x=index_label(period)) +
-            scale_x_continuous(breaks=integer_breaks)
+            point_repr +
+            geom_ribbon(aes(color=branch), alpha=0.3) +
+            labs(title=metric, x=index_label(period))
     } else {
         df <- filter(df, comparison == !!comparison)
         g <- ggplot(df, aes(window_index, point, ymin=lower, ymax=upper, group=0)) +
-            geom_line(aes(color=branch)) +
+            point_repr +
             geom_ribbon(alpha=0.3) +
             labs(title=paste0(metric, " (", comparison, ")"), x=index_label(period)) +
-            scale_x_continuous(breaks=integer_breaks)
+            geom_blank(aes(ymin=-upper, ymax=-lower)) +
+            geom_hline(yintercept=0, alpha=0.6)
         if(comparison == "relative_uplift") {
             g <- g + scale_y_continuous(labels=scales::percent)
         }
