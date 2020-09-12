@@ -85,3 +85,23 @@ plot_count <- function(df, metric, comparison, period) {
         slice_min(window_index, n=1, with_ties=TRUE) %>%
         select(Branch=branch, Clients=point)
  }
+
+plot_empirical_cdf <- function(df, metric, comparison, period) {
+    df <- filter(df, metric == !!metric, statistic == "empirical_cdf")
+
+    ggplot(df, aes(as.numeric(parameter), point, color=branch)) +
+        geom_step() +
+        scale_x_log10() +  # just a guess
+        scale_y_continuous(labels=scales::percent) +
+        labs(title=paste0(metric, " eCDF"), x="Value", y="% clients")
+}
+
+plot_kernel_density_estimate <- function(df, metric, comparison, period) {
+    df <- filter(df, metric == !!metric, statistic == "kernel_density_estimate")
+
+    ggplot(df, aes(as.numeric(parameter), point, color=branch)) +
+        geom_line() +
+        scale_x_log10() +  # just a guess
+        scale_y_continuous() +
+        labs(title=paste0(metric, " density estimate"), x="Value", y="Density")
+}
