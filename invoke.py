@@ -189,10 +189,22 @@ class ResultMetric:
             yield ResultStatistic(name, rows)
 
 
+@attr.s(auto_attribs=True)
 class Result:
-    def __init__(self, path):
-        self.data = pd.read_json(path)
-        self.path = path
+    path: str
+    data: pd.DataFrame
+
+    @classmethod
+    def from_path(cls, path) -> "Result":
+        data = pd.read_json(path)
+        return cls(path, data)
+
+    @property
+    def segments(self) -> List[str]:
+        segments = set(self.data.segment.fillna("all").drop_duplicates())
+        segments.remove("all")
+        l = ["all"] + sorted(segments)
+        return l
 
     @property
     def metrics(self) -> Iterable[ResultMetric]:
@@ -217,6 +229,14 @@ class ResultSet:
     def daily(self):
         return self.get_result("daily")
 
+    @property
+    def segments(self):
+        for k in ("overall", "weekly", "daily"):
+            if not (result := self.get_result(k)):
+                continue
+            return result.segments
+        return []
+
     def get_result(self, period: str) -> Optional[Result]:
         assert period in ("daily", "weekly", "overall")
         filename = (
@@ -224,7 +244,7 @@ class ResultSet:
             / f"{Cache.RESULT_CACHE_PATH}/statistics_{self.slug}_{period}.json"
         )
         if filename.exists():
-            return Result(filename)
+            return Result.from_path(filename)
         return None
 
     @property
@@ -285,7 +305,8 @@ def render_index(experiments, cache) -> str:
     results = {slug: ResultSet(slug, cache.path) for slug in to_list}
     with_results = [experiments[slug] for slug in to_list if slug in experiments]
     return jinja.get_template("index.html.jinja2").render(
-        experiments=with_results, results=results,
+        experiments=with_results,
+        results=results,
     )
 
 

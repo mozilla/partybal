@@ -15,22 +15,23 @@ library(dplyr)
 library(ggplot2)
 library(jsonlite)
 
-load_table <- function(path) {
+load_table <- function(path, segment) {
     read_json(path, simplifyDataFrame=TRUE) %>%
-        mutate(window_index=as.integer(window_index))
+        mutate(window_index=as.integer(window_index)) %>%
+        filter(segment == !!segment | is.na(segment))
 }
 
 source("{{source_path}}/plot_functions.R")
 ```
 
-{% macro plot_period(name) -%}
+{% macro plot_period(name, segment) -%}
 {% set period = results.get_result(name) %}
 ```{r}
-period <- load_table("{{period.path}}")
+period <- load_table("{{period.path}}", "{{segment}}")
 ```
 
 {% for metric in period.metrics %}
-## {{ metric.name }}
+### {{ metric.name }}
 {% for statistic in metric.statistics %}
 {% for comparison in statistic.comparisons %}
 ```{r}
@@ -41,11 +42,14 @@ plot_{{statistic.name}}(df=period, metric="{{metric.name}}", comparison="{{compa
 {% endfor %} {# metric #}
 {%- endmacro %}
 
-# Overall
+{% for segment in results.segments %}
+# {{segment}}
+
+## Overall
 
 {% if results.overall %}
 ```{r}
-overall <- load_table("{{results.overall.path}}")
+overall <- load_table("{{results.overall.path}}", "{{segment}}")
 ```
 
 Statistics with means:
@@ -91,18 +95,20 @@ overall %>%
 Overall results are not available yet.
 {% endif %}
 
-# Weekly
+## Weekly
 
 {% if results.weekly %}
-{{ plot_period("weekly") }}
+{{ plot_period("weekly", segment) }}
 {% else %}
 No weekly results are available yet.
 {% endif %}
 
-# Daily
+## Daily
 
 {% if results.daily %}
-{{ plot_period("daily") }}
+{{ plot_period("daily", segment) }}
 {% else %}
 No daily results are available yet.
 {% endif %}
+
+{% endfor %}
