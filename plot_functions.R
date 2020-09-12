@@ -30,7 +30,8 @@ plot_deciles <- function(df, metric, comparison, period) {
         df <- filter(df, comparison == !!comparison)
         g <- ggplot(df, aes(parameter, point, ymin=lower, ymax=upper, group=0)) +
             geom_line(aes(color=branch)) +
-            geom_ribbon(alpha=0.3) +
+            geom_ribbon(aes(fill=branch), alpha=0.3) +
+            geom_hline(yintercept=0, alpha=0.6) +
             labs(title=paste0(metric, " (", comparison, ")"), x="Quantile") +
             facet_wrap(~window_index, labeller=labels_for(period))
         if(comparison == "relative_uplift") {
@@ -66,7 +67,7 @@ plot_mean <- function(df, metric, comparison, period, statistic="mean") {
         df <- filter(df, comparison == !!comparison)
         g <- ggplot(df, aes(window_index, point, ymin=lower, ymax=upper, group=0)) +
             point_repr +
-            geom_ribbon(alpha=0.3) +
+            geom_ribbon(aes(fill=branch), alpha=0.3) +
             labs(title=paste0(metric, " (", comparison, ")"), x=index_label(period)) +
             geom_blank(aes(ymin=-upper, ymax=-lower)) +
             geom_hline(yintercept=0, alpha=0.6)
