@@ -28,7 +28,7 @@ plot_deciles <- function(df, metric, comparison, period) {
             facet_wrap(~window_index, labeller=labels_for(period))
     } else {
         df <- filter(df, comparison == !!comparison)
-        g <- ggplot(df, aes(parameter, point, ymin=lower, ymax=upper, group=0)) +
+        g <- ggplot(df, aes(parameter, point, ymin=lower, ymax=upper, group=branch)) +
             geom_line(aes(color=branch)) +
             geom_ribbon(aes(fill=branch), alpha=0.3) +
             geom_hline(yintercept=0, alpha=0.6) +
@@ -65,7 +65,7 @@ plot_mean <- function(df, metric, comparison, period, statistic="mean") {
             labs(title=metric, x=index_label(period))
     } else {
         df <- filter(df, comparison == !!comparison)
-        g <- ggplot(df, aes(window_index, point, ymin=lower, ymax=upper, group=0)) +
+        g <- ggplot(df, aes(window_index, point, ymin=lower, ymax=upper, group=branch)) +
             point_repr +
             geom_ribbon(aes(fill=branch), alpha=0.3) +
             labs(title=paste0(metric, " (", comparison, ")"), x=index_label(period)) +
