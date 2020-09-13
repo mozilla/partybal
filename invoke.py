@@ -201,6 +201,8 @@ class Result:
 
     @property
     def segments(self) -> List[str]:
+        if "segments" not in self.data.columns:
+            return ["all"]
         segments = set(self.data.segment.fillna("all").drop_duplicates())
         segments.remove("all")
         l = ["all"] + sorted(segments)
