@@ -139,6 +139,7 @@ class Experiment:
             experiment=self,
             results=results,
             source_path=str(Path(__file__).parent.resolve()),
+            repr=repr,
         )
 
 

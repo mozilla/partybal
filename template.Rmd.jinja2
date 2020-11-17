@@ -1,5 +1,5 @@
 ---
-title: "{{ experiment.name }}"
+title: {{ repr(experiment.name) }}
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 output:
   html_document:
