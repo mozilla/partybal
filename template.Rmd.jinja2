@@ -16,9 +16,13 @@ library(ggplot2)
 library(jsonlite)
 
 load_table <- function(path, segment) {
-    read_json(path, simplifyDataFrame=TRUE) %>%
+    df = read_json(path, simplifyDataFrame=TRUE) %>%
         mutate(window_index=as.integer(window_index)) %>%
         filter(segment == !!segment | is.na(segment))
+    if(!("comparison" %in% names(df))) { 
+        df$comparison = NA
+    }
+    df
 }
 
 source("{{source_path}}/plot_functions.R")
