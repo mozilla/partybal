@@ -59,9 +59,11 @@ overall <- load_table("{{results.overall.path}}", "{{segment}}")
 Statistics with means:
 
 ```{r, fig.width=4, fig.height=8}
-overall %>%
-    filter(statistic == "mean", comparison == "difference") %>%
-    ggplot(aes(metric, point, ymin=lower, ymax=upper, color=branch)) +
+to_plot = overall %>%
+    filter(statistic == "mean", comparison == "difference")
+
+if (nrow(to_plot) > 0) {
+    ggplot(to_plot, aes(metric, point, ymin=lower, ymax=upper, color=branch)) +
         geom_pointrange(position=position_dodge(width=0.2)) +
         geom_blank(aes(ymin=-upper, ymax=-lower)) +
         coord_flip() +
@@ -75,11 +77,16 @@ overall %>%
             strip.background=element_blank(),
             strip.text.x=element_blank()
         )
+} else {
+    "No comparisons"
+}
 ```
 ```{r, fig.width=4, fig.height=8}
-overall %>%
-    filter(statistic == "mean", comparison == "relative_uplift") %>%
-    ggplot(aes(metric, point, ymin=lower, ymax=upper, color=branch)) +
+to_plot = overall %>%
+    filter(statistic == "mean", comparison == "relative_uplift")
+
+if (nrow(to_plot) > 0) {
+    ggplot(to_plot, aes(metric, point, ymin=lower, ymax=upper, color=branch)) +
         geom_pointrange(position=position_dodge(width=0.2)) +
         geom_blank(aes(ymin=-upper, ymax=-lower)) +
         scale_y_continuous(label=scales::percent) +
@@ -94,6 +101,9 @@ overall %>%
             strip.background=element_blank(),
             strip.text.x=element_blank()
         )
+} else {
+    "No comparisons"
+}
 ```
 
 {{ plot_period("overall", segment) }}

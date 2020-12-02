@@ -21,6 +21,7 @@ plot_deciles <- function(df, metric, comparison, period) {
     df <- filter(df, metric == !!metric, statistic == "deciles")
     if(comparison == "none") {
         df <- filter(df, is.na(comparison))
+        if(nrow(df) == 0) { return("No data") }
         g <- ggplot(df, aes(parameter, point, ymin=lower, ymax=upper, group=branch)) +
             geom_line(aes(color=branch)) +
             geom_ribbon(aes(fill=branch), alpha=0.3) +
@@ -28,6 +29,7 @@ plot_deciles <- function(df, metric, comparison, period) {
             facet_wrap(~window_index, labeller=labels_for(period))
     } else {
         df <- filter(df, comparison == !!comparison)
+        if(nrow(df) == 0) { return("No data") }
         g <- ggplot(df, aes(parameter, point, ymin=lower, ymax=upper, group=branch)) +
             geom_line(aes(color=branch)) +
             geom_ribbon(aes(fill=branch), alpha=0.3) +
@@ -59,12 +61,14 @@ plot_mean <- function(df, metric, comparison, period, statistic="mean") {
 
     if(comparison == "none") {
         df <- filter(df, is.na(comparison))
+        if(nrow(df) == 0) { return("No data") }
         g <- ggplot(df, aes(window_index, point, ymin=lower, ymax=upper, group=branch)) +
             point_repr +
             geom_ribbon(aes(fill=branch), alpha=0.3) +
             labs(title=metric, x=index_label(period))
     } else {
         df <- filter(df, comparison == !!comparison)
+        if(nrow(df) == 0) { return("No data") }
         g <- ggplot(df, aes(window_index, point, ymin=lower, ymax=upper, group=branch)) +
             point_repr +
             geom_ribbon(aes(fill=branch), alpha=0.3) +
@@ -88,6 +92,7 @@ plot_count <- function(df, metric, comparison, period) {
 
 plot_empirical_cdf <- function(df, metric, comparison, period) {
     df <- filter(df, metric == !!metric, statistic == "empirical_cdf")
+    if(nrow(df) == 0) { return("No data") }
 
     ggplot(df, aes(as.numeric(parameter), point, color=branch)) +
         geom_step() +
@@ -98,6 +103,7 @@ plot_empirical_cdf <- function(df, metric, comparison, period) {
 
 plot_kernel_density_estimate <- function(df, metric, comparison, period) {
     df <- filter(df, metric == !!metric, statistic == "kernel_density_estimate")
+    if(nrow(df) == 0) { return("No data") }
 
     ggplot(df, aes(as.numeric(parameter), point, color=branch)) +
         geom_line() +
