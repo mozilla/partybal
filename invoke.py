@@ -26,7 +26,7 @@ jinja = Environment(loader=FileSystemLoader("."), undefined=StrictUndefined)
 class Cache:
     TIMESTAMP_FILENAME = "last_run"
     RESULT_CACHE_PATH = "results"
-    EXPERIMENT_BUCKET_URL = "gs://mozanalysis"
+    EXPERIMENT_BUCKET_URL = "gs://mozanalysis/statistics"
     EXPERIMENTS_FILENAME = "experiments.json"
 
     def __init__(self, path=None):
