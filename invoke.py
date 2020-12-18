@@ -144,9 +144,54 @@ class Experiment:
 
 
 @attr.s(auto_attribs=True)
+class NimbusBranch:
+    slug: str
+
+
+@attr.s(auto_attribs=True)
+class NimbusExperiment:
+    slug: str
+    userFacingName: str
+    branches: List[NimbusBranch]
+    startDate: Optional[datetime]
+    referenceBranch: Optional[str]
+
+    def branches_as_variants(self) -> List[Variant]:
+        variants = []
+        for branch in self.branches:
+            variants.append(
+                Variant(
+                    slug=branch.slug,
+                    description=branch.slug,
+                    is_control=branch.slug == self.referenceBranch,
+                )
+            )
+        return variants
+
+    def to_experiment(self) -> Experiment:
+        return Experiment(
+            name=self.userFacingName,
+            slug=self.slug,
+            normandy_slug=self.slug,
+            start_date=self.startDate.replace(tzinfo=UTC).timestamp() * 1000,
+            variants=self.branches_as_variants(),
+        )
+
+
+cattr.register_structure_hook(
+    datetime,
+    lambda num, _: datetime.fromisoformat(num.replace("Z", "+00:00")),
+)
+
+
+@attr.s(auto_attribs=True)
 class ExperimentCollection:
     EXPERIMENTER_API_URL = (
         "https://experimenter.services.mozilla.com/api/v1/experiments/"
+    )
+
+    EXPERIMENTER_NIMBUS_API_URL = (
+        "https://experimenter.services.mozilla.com/api/v6/experiments/"
     )
 
     experiments: Dict[str, Experiment] = {}
@@ -156,6 +201,9 @@ class ExperimentCollection:
         l = [
             cattr.structure(e, Experiment)
             for e in requests.get(cls.EXPERIMENTER_API_URL).json()
+        ] + [
+            cattr.structure(e, NimbusExperiment).to_experiment()
+            for e in requests.get(cls.EXPERIMENTER_NIMBUS_API_URL).json()
         ]
         return cls({x.filename_slug: x for x in l})
 
