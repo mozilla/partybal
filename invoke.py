@@ -168,12 +168,14 @@ class NimbusExperiment:
             )
         return variants
 
-    def to_experiment(self) -> Experiment:
+    def to_experiment_maybe(self) -> Optional[Experiment]:
+        if not self.startDate:
+            return None
         return Experiment(
             name=self.userFacingName,
             slug=self.slug,
             normandy_slug=self.slug,
-            start_date=self.startDate.replace(tzinfo=UTC).timestamp() * 1000,
+            start_date=int(self.startDate.replace(tzinfo=UTC).timestamp() * 1000),
             variants=self.branches_as_variants(),
         )
 
@@ -202,10 +204,10 @@ class ExperimentCollection:
             cattr.structure(e, Experiment)
             for e in requests.get(cls.EXPERIMENTER_API_URL).json()
         ] + [
-            cattr.structure(e, NimbusExperiment).to_experiment()
+            cattr.structure(e, NimbusExperiment).to_experiment_maybe()
             for e in requests.get(cls.EXPERIMENTER_NIMBUS_API_URL).json()
         ]
-        return cls({x.filename_slug: x for x in l})
+        return cls({x.filename_slug: x for x in l if x})
 
     def __getitem__(self, item: str) -> Experiment:
         return self.experiments[item]
@@ -353,7 +355,7 @@ def render_index(experiments, cache) -> str:
         for p in cache.new_since_last_run(last_run=datetime.min.replace(tzinfo=UTC))
     }
     to_list.discard(None)
-    results = {slug: ResultSet(slug, cache.path) for slug in to_list}
+    results = {slug: ResultSet(slug, cache.path) for slug in to_list if slug}
     with_results = [experiments[slug] for slug in to_list if slug in experiments]
     return jinja.get_template("index.html.jinja2").render(
         experiments=with_results,
