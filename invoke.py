@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
+from functools import partial
 import json
 import os
 from pathlib import Path
@@ -335,7 +337,7 @@ def render(experiment: Experiment, cache: Cache, output: Path):
     env = dict(os.environ)
     env["R_LIBS_USER"] = ""
 
-    subprocess.run(
+    result = subprocess.run(
         [
             "R",
             "--vanilla",
@@ -344,9 +346,18 @@ def render(experiment: Experiment, cache: Cache, output: Path):
             "-e",
             f"suppressWarnings(rmarkdown::render('{str(template)}', quiet=TRUE))",
         ],
-        check=True,
+        check=False,
         env=env,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        encoding="utf-8",
     )
+
+    if result.returncode == 0:
+        print(f"{slug}: ok")
+    else:
+        print(f"{slug}: error")
+        print(result.stdout)
 
 
 def render_index(experiments, cache) -> str:
@@ -370,24 +381,20 @@ def cli():
 
 @cli.command()
 @click.option("--output", default="output")
-def invoke(output):
+@click.option("-j", default=0)
+def invoke(output, j):
     cache = Cache()
     cache.sync()
-    to_analyze = {slug_from_filename(p) for p in cache.new_since_last_run()}
-    to_analyze.discard(None)
+    slugs_to_analyze = {slug_from_filename(p) for p in cache.new_since_last_run()}
+    slugs_to_analyze.discard(None)
 
     experiments = cache.experiments
 
     output = Path(output)
-    for slug in to_analyze:
-        if slug not in experiments:
-            continue
-        print(f"\n\n{slug}")
-        try:
-            render(experiments[slug], cache, output)
-        except Exception as e:
-            print(e)
-            continue
+    to_run = [experiments[slug] for slug in slugs_to_analyze if slug in experiments]
+    map_function = partial(render, cache=cache, output=output)
+    with ThreadPoolExecutor(j or os.cpu_count()) as executor:
+        list(executor.map(map_function, to_run))
 
     (output / "index.html").write_text(render_index(experiments, cache))
 
