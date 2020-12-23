@@ -98,7 +98,8 @@ plot_empirical_cdf <- function(df, metric, comparison, period) {
         geom_step() +
         scale_x_log10() +  # just a guess
         scale_y_continuous(labels=scales::percent) +
-        labs(title=paste0(metric, " eCDF"), x="Value", y="% clients")
+        labs(title=paste0(metric, " eCDF"), x="Value", y="% clients") +
+        facet_wrap(~window_index, labeller=labels_for(period))
 }
 
 plot_kernel_density_estimate <- function(df, metric, comparison, period) {
@@ -109,5 +110,6 @@ plot_kernel_density_estimate <- function(df, metric, comparison, period) {
         geom_line() +
         scale_x_log10() +  # just a guess
         scale_y_continuous() +
-        labs(title=paste0(metric, " density estimate"), x="Value", y="Density")
+        labs(title=paste0(metric, " density estimate"), x="Value", y="Density") +
+        facet_wrap(~window_index, labeller=labels_for(period))
 }
