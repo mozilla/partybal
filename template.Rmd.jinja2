@@ -17,15 +17,17 @@ library(jsonlite)
 
 load_table <- function(path, segment) {
     df = read_json(path, simplifyDataFrame=TRUE) %>%
-        mutate(window_index=as.integer(window_index)) %>%
+        mutate(window_index=as.integer(window_index) - 1) %>%
         filter(segment == !!segment | is.na(segment))
     if(!("comparison" %in% names(df))) { 
         df$comparison = NA
     }
+
     # Ensure the control branch is ordered last to make plot colors consistent
     branches = unique(df$branch)
     branches = branches[branches != "{{experiment.control_branch_slug}}"]
     df$branch = factor(df$branch, c(branches, "{{experiment.control_branch_slug}}"))
+
     df
 }
 
