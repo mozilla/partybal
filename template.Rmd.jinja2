@@ -22,6 +22,10 @@ load_table <- function(path, segment) {
     if(!("comparison" %in% names(df))) { 
         df$comparison = NA
     }
+    # Ensure the control branch is ordered last to make plot colors consistent
+    branches = unique(df$branch)
+    branches = branches[branches != "{{experiment.control_branch_slug}}"]
+    df$branch = factor(df$branch, c(branches, "{{experiment.control_branch_slug}}"))
     df
 }
 
