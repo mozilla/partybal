@@ -60,11 +60,12 @@ plot_{{statistic.name}}(df=period, metric="{{metric.name}}", comparison="{{compa
 {% if results.overall %}
 ```{r}
 overall <- load_table("{{results.overall.path}}", "{{segment}}")
+n_metrics = length(unique(overall$metric))
 ```
 
 Statistics with means:
 
-```{r, fig.width=4, fig.height=8}
+```{r, fig.width=6, fig.height=10}
 to_plot = overall %>%
     filter(statistic == "mean", comparison == "difference")
 
@@ -87,7 +88,7 @@ if (nrow(to_plot) > 0) {
     "No comparisons"
 }
 ```
-```{r, fig.width=4, fig.height=8}
+```{r, fig.width=6, fig.height=10}
 to_plot = overall %>%
     filter(statistic == "mean", comparison == "relative_uplift")
 

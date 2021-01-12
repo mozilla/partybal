@@ -50,7 +50,7 @@ plot_mean <- function(df, metric, comparison, period, statistic="mean") {
             list(
                 geom_point(aes(color=branch), position=position_dodge(width=0.05)),
                 geom_errorbar(aes(color=branch), position=position_dodge(width=0.05), width=0.03),
-                scale_x_continuous(breaks=integer_breaks, limits=c(0.6, 1.4))
+                scale_x_continuous(breaks=integer_breaks, limits=c(-0.4, 0.4))
             )
         } else {
             list(
