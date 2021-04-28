@@ -409,11 +409,14 @@ def clean():
 @cli.command()
 @click.option("--sync/--no-sync")
 @click.option("--output", default="output")
-@click.argument("slug")
+@click.argument("slug", required=False)
 def debug(sync, output, slug):
     cache = Cache()
     if sync:
         cache.sync()
+
+    if not slug:
+        return
 
     output = Path(output)
     experiments = cache.experiments
