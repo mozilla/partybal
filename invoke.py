@@ -415,12 +415,10 @@ def debug(sync, output, slug):
     if sync:
         cache.sync()
 
-    if not slug:
-        return
-
     output = Path(output)
     experiments = cache.experiments
-    render(experiments[slug], cache, output)
+    if slug:
+        render(experiments[slug], cache, output)
     (output / "index.html").write_text(render_index(experiments, cache))
 
 
