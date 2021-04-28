@@ -47,7 +47,7 @@ period <- load_table("{{period.path}}", "{{segment}}")
 {% for statistic in metric.statistics %}
 {% for comparison in statistic.comparisons %}
 ```{r}
-plot_{{statistic.name}}(df=period, metric="{{metric.name}}", comparison="{{comparison}}", period="{{name}}")
+plot_{{statistic.name}}(df=period, metric="{{metric.name}}", comparison="{{comparison}}", period="{{name}}", segment="{{segment}}")
 ```
 {% endfor %} {# comparison #}
 {% endfor %} {# statistic #}
@@ -77,7 +77,7 @@ if (nrow(to_plot) > 0) {
         geom_blank(aes(ymin=-upper, ymax=-lower)) +
         coord_flip() +
         facet_wrap(~metric, ncol=1, scales="free") +
-        labs(title="Absolute differences in mean ± CI") +
+        labs(title="Absolute differences in mean ± CI", subtitle=paste("Segment: {{segment}}")) +
         geom_hline(yintercept=0) +
         theme(
             legend.position="bottom",
@@ -101,7 +101,7 @@ if (nrow(to_plot) > 0) {
         scale_y_continuous(label=scales::percent) +
         coord_flip() +
         facet_wrap(~metric, ncol=1, scales="free") +
-        labs(title="Relative differences in mean ± CI") +
+        labs(title="Relative differences in mean ± CI", subtitle=paste("Segment: {{segment}}")) +
         geom_hline(yintercept=0) +
         theme(
             legend.position="bottom",

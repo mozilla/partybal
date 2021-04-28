@@ -17,7 +17,7 @@ labels_for <- function(period) {
     as_labeller(inner)
 }
 
-plot_deciles <- function(df, metric, comparison, period) {
+plot_deciles <- function(df, metric, comparison, period, segment) {
     df <- filter(df, metric == !!metric, statistic == "deciles")
     if(comparison == "none") {
         df <- filter(df, is.na(comparison))
@@ -40,10 +40,10 @@ plot_deciles <- function(df, metric, comparison, period) {
             g <- g + scale_y_continuous(labels=scales::percent)
         }
     }
-    g
+    g + labs(subtitle=paste("Segment:", segment))
 }
 
-plot_mean <- function(df, metric, comparison, period, statistic="mean") {
+plot_mean <- function(df, metric, comparison, period, segment, statistic="mean") {
     df <- filter(df, metric == !!metric, statistic == !!statistic)
 
     point_repr <- if(length(unique(df$window_index)) == 1) {
@@ -79,18 +79,18 @@ plot_mean <- function(df, metric, comparison, period, statistic="mean") {
             g <- g + scale_y_continuous(labels=scales::percent)
         }
     }
-    g
+    g + labs(subtitle=paste("Segment:", segment))
 }
 
 plot_binomial <- function(...) { plot_mean(..., "binomial") }
 
-plot_count <- function(df, metric, comparison, period) {
+plot_count <- function(df, metric, comparison, period, segment) {
     filter(df, metric == !!metric) %>%
         slice_min(window_index, n=1, with_ties=TRUE) %>%
         select(Branch=branch, Clients=point)
  }
 
-plot_empirical_cdf <- function(df, metric, comparison, period) {
+plot_empirical_cdf <- function(df, metric, comparison, period, segment) {
     df <- filter(df, metric == !!metric, statistic == "empirical_cdf")
     if(nrow(df) == 0) { return("No data") }
 
@@ -98,18 +98,22 @@ plot_empirical_cdf <- function(df, metric, comparison, period) {
         geom_step() +
         scale_x_log10() +  # just a guess
         scale_y_continuous(labels=scales::percent) +
-        labs(title=paste0(metric, " eCDF"), x="Value", y="% clients") +
+        labs(title=paste0(metric, " eCDF"), x="Value", y="% clients", subtitle=paste("Segment:", segment)) +
         facet_wrap(~window_index, labeller=labels_for(period))
 }
 
-plot_kernel_density_estimate <- function(df, metric, comparison, period) {
+plot_kernel_density_estimate <- function(df, metric, comparison, period, segment) {
     df <- filter(df, metric == !!metric, statistic == "kernel_density_estimate")
     if(nrow(df) == 0) { return("No data") }
 
-    ggplot(df, aes(as.numeric(parameter), point, color=branch)) +
+    g <- ggplot(df, aes(as.numeric(parameter), point, color=branch)) +
         geom_line() +
-        scale_x_log10() +  # just a guess
         scale_y_continuous() +
-        labs(title=paste0(metric, " density estimate"), x="Value", y="Density") +
+        labs(title=paste0(metric, " density estimate"), x="Value", y="Density", subtitle=paste("Segment:", segment)) +
         facet_wrap(~window_index, labeller=labels_for(period))
+
+    if(metric != "days_of_use") {  # just a guess
+        g <- g + scale_x_log10()
+    }
+    g
 }
