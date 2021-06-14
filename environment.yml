@@ -15,5 +15,7 @@ dependencies:
   - jinja2
   - cattrs
   - pandas
+  - fonts-conda-ecosystem
+  - google-cloud-sdk
 prefix: /usr/local/Caskroom/miniconda/base/envs/partybal
 
