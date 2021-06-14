@@ -381,9 +381,10 @@ def cli():
 
 @cli.command()
 @click.option("--output", default="output")
+@click.option("--cache")
 @click.option("-j", default=0)
-def invoke(output, j):
-    cache = Cache()
+def invoke(output, cache, j):
+    cache = Cache(cache)
     cache.sync()
     slugs_to_analyze = {slug_from_filename(p) for p in cache.new_since_last_run()}
     slugs_to_analyze.discard(None)
@@ -402,16 +403,18 @@ def invoke(output, j):
 
 
 @cli.command()
-def clean():
-    Cache().clean()
+@click.option("--cache")
+def clean(cache):
+    Cache(cache).clean()
 
 
 @cli.command()
 @click.option("--sync/--no-sync")
+@click.option("--cache")
 @click.option("--output", default="output")
 @click.argument("slug", required=False)
-def debug(sync, output, slug):
-    cache = Cache()
+def debug(sync, output, slug, cache):
+    cache = Cache(cache)
     if sync:
         cache.sync()
 
