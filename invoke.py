@@ -52,10 +52,6 @@ class Cache:
 
     def sync(self, remote_bucket_url=None) -> None:
         self.assert_exists(self.path / self.RESULT_CACHE_PATH)
-        # avoid a bug on python 3.8
-        # https://github.com/GoogleCloudPlatform/gsutil/issues/961
-        environ = dict(os.environ)
-        environ["CLOUDSDK_GSUTIL_PYTHON"] = "python2.7"
         result = subprocess.run(
             [
                 "gsutil",
@@ -66,7 +62,6 @@ class Cache:
                 remote_bucket_url or self.EXPERIMENT_BUCKET_URL,
                 str(self.path / self.RESULT_CACHE_PATH),
             ],
-            env=environ,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             text=True,
