@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime
+from datetime import datetime, timedelta
 from functools import partial
 import json
 import os
@@ -377,11 +377,23 @@ def cli():
 @cli.command()
 @click.option("--output", default="output")
 @click.option("--cache")
+@click.option(
+    "--updated-seconds-ago",
+    type=int,
+    help="Analyze experiments that were modified in the last X seconds.",
+)
 @click.option("-j", default=0)
-def invoke(output, cache, j):
+def invoke(output, cache, j, updated_seconds_ago):
     cache = Cache(cache)
     cache.sync()
-    slugs_to_analyze = {slug_from_filename(p) for p in cache.new_since_last_run()}
+
+    last_run = None
+    if updated_seconds_ago:
+        last_run = datetime.now(UTC) - timedelta(seconds=updated_seconds_ago)
+
+    slugs_to_analyze = {
+        slug_from_filename(p) for p in cache.new_since_last_run(last_run)
+    }
     slugs_to_analyze.discard(None)
 
     experiments = cache.experiments
