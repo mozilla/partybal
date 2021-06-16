@@ -40,7 +40,7 @@ https://conda.anaconda.org/conda-forge/osx-64/libllvm12-12.0.0-hd011deb_1.tar.bz
 https://conda.anaconda.org/conda-forge/osx-64/libpng-1.6.37-h7cec526_2.tar.bz2#9e52521faba2b53269672628d34e1513
 https://conda.anaconda.org/conda-forge/osx-64/lz4-c-1.9.3-h046ec9c_0.tar.bz2#7f13d69c1b7989b85029efb6f3e35af9
 https://conda.anaconda.org/conda-forge/osx-64/openssl-1.1.1k-h0d85af4_0.tar.bz2#f9582eb16f4e3bc7932995e122f30a74
-https://conda.anaconda.org/conda-forge/osx-64/pcre-8.44-hb1e8313_0.tar.bz2#e1c1a939ae5ecd32f13db1f742b434e5
+https://conda.anaconda.org/conda-forge/osx-64/pcre-8.45-he49afe7_0.tar.bz2#0526850419e04ac003bc0b65a78dc4cc
 https://conda.anaconda.org/conda-forge/osx-64/pcre2-10.36-h5cf9962_1.tar.bz2#72bdc145d557ae2d06624d8bd73dca39
 https://conda.anaconda.org/conda-forge/osx-64/readline-8.1-h05e3726_0.tar.bz2#2832e9b6a7caa7cb192fcda6cfcd8871
 https://conda.anaconda.org/conda-forge/osx-64/tapi-1100.0.11-h9ce4665_0.tar.bz2#f9ff42ccf809a21ba6f8607f8de36108
@@ -149,7 +149,7 @@ https://conda.anaconda.org/conda-forge/osx-64/r-stringi-1.6.2-r40hd783aa8_0.tar.
 https://conda.anaconda.org/conda-forge/osx-64/r-utf8-1.2.1-r40h28b5c78_0.tar.bz2#48ac9f58d97fb9d1a42aa4ae54d8bd57
 https://conda.anaconda.org/conda-forge/noarch/r-viridislite-0.4.0-r40hc72bb7e_0.tar.bz2#f95671074c614ce2042b881ba7ff628f
 https://conda.anaconda.org/conda-forge/noarch/r-withr-2.4.2-r40hc72bb7e_0.tar.bz2#61bc3ee9e57fc8e8d47c62db9bfc7d9c
-https://conda.anaconda.org/conda-forge/osx-64/r-xfun-0.23-r40h9951f98_0.tar.bz2#dcc692b47d28e25ab125daa295a6bd01
+https://conda.anaconda.org/conda-forge/osx-64/r-xfun-0.24-r40h9951f98_0.tar.bz2#bf6c4d42193ab7032292a6295d655ee0
 https://conda.anaconda.org/conda-forge/osx-64/r-yaml-2.2.1-r40h28b5c78_1.tar.bz2#36b6b103b04c9d79ff8f5c7529a90e11
 https://conda.anaconda.org/conda-forge/osx-64/r-class-7.3_19-r40h28b5c78_0.tar.bz2#34b5ae7b86bef85f52ab26d12defa511
 https://conda.anaconda.org/conda-forge/noarch/r-cli-2.5.0-r40hc72bb7e_0.tar.bz2#26e6f24f5406675abe42d02a995b7f2f
@@ -178,7 +178,7 @@ https://conda.anaconda.org/conda-forge/osx-64/r-vctrs-0.3.8-r40h28b5c78_1.tar.bz
 https://conda.anaconda.org/conda-forge/noarch/r-pillar-1.6.1-r40hc72bb7e_0.tar.bz2#50d0e64e4f95477041f6fc79d0b90d03
 https://conda.anaconda.org/conda-forge/osx-64/r-pkgload-1.2.1-r40h9951f98_0.tar.bz2#b34312332b417bc30602015ba4affd2a
 https://conda.anaconda.org/conda-forge/noarch/r-recommended-4.0-r40hd8ed1ab_1004.tar.bz2#31ff637223ddb8258052c17278357ce0
-https://conda.anaconda.org/conda-forge/noarch/r-rmarkdown-2.8-r40hc72bb7e_0.tar.bz2#a24d85018c6557223ae5d4a8404d761d
+https://conda.anaconda.org/conda-forge/noarch/r-rmarkdown-2.9-r40hc72bb7e_0.tar.bz2#ed318d9c2334e00deeec1cc148a32f79
 https://conda.anaconda.org/conda-forge/osx-64/r-tidyselect-1.1.1-r40hbe3e9c8_0.tar.bz2#ec8ac7aad4e7f368ce9748f058c2ecf5
 https://conda.anaconda.org/conda-forge/noarch/r-4.0-r40hd8ed1ab_1004.tar.bz2#652b77c50c2986cf2c869da78371ba01
 https://conda.anaconda.org/conda-forge/osx-64/r-tibble-3.1.2-r40h28b5c78_0.tar.bz2#8bb76d2cc6fad489b53539aae321055d

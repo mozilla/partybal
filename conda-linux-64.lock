@@ -44,7 +44,7 @@ https://conda.anaconda.org/conda-forge/linux-64/lz4-c-1.9.3-h9c3ff4c_0.tar.bz2#4
 https://conda.anaconda.org/conda-forge/linux-64/make-4.3-hd18ef5c_1.tar.bz2#4049ebfd3190b580dffe76daed26155a
 https://conda.anaconda.org/conda-forge/linux-64/ncurses-6.2-h58526e2_4.tar.bz2#509f2a21c4a09214cd737a480dfd80c9
 https://conda.anaconda.org/conda-forge/linux-64/openssl-1.1.1k-h7f98852_0.tar.bz2#07fae2cb088379c8441e0f3ffa1f4025
-https://conda.anaconda.org/conda-forge/linux-64/pcre-8.44-he1b5a44_0.tar.bz2#e647d89cd5cdf62760cf283a001841ff
+https://conda.anaconda.org/conda-forge/linux-64/pcre-8.45-h9c3ff4c_0.tar.bz2#c05d1820a6d34ff07aaaab7a9b7eddaa
 https://conda.anaconda.org/conda-forge/linux-64/pixman-0.40.0-h36c2ea0_0.tar.bz2#660e72c82f2e75a6b3fe6a6e75c79f19
 https://conda.anaconda.org/conda-forge/linux-64/pthread-stubs-0.4-h36c2ea0_1001.tar.bz2#22dad4df6e8630e8dff2428f6f6a7036
 https://conda.anaconda.org/conda-forge/linux-64/sed-4.8-he412f7d_0.tar.bz2#7362f0042e95681f5d371c46c83ebd08
@@ -157,7 +157,7 @@ https://conda.anaconda.org/conda-forge/linux-64/r-stringi-1.6.2-r40hcabe038_0.ta
 https://conda.anaconda.org/conda-forge/linux-64/r-utf8-1.2.1-r40hcfec24a_0.tar.bz2#3d45bbd22ad05aedf829f59872ddeebb
 https://conda.anaconda.org/conda-forge/noarch/r-viridislite-0.4.0-r40hc72bb7e_0.tar.bz2#f95671074c614ce2042b881ba7ff628f
 https://conda.anaconda.org/conda-forge/noarch/r-withr-2.4.2-r40hc72bb7e_0.tar.bz2#61bc3ee9e57fc8e8d47c62db9bfc7d9c
-https://conda.anaconda.org/conda-forge/linux-64/r-xfun-0.23-r40h03ef668_0.tar.bz2#bf10c5236558a7b2723883b7ec531e1d
+https://conda.anaconda.org/conda-forge/linux-64/r-xfun-0.24-r40h03ef668_0.tar.bz2#1fd75d25fb19c06513a9329c114057f9
 https://conda.anaconda.org/conda-forge/linux-64/r-yaml-2.2.1-r40hcfec24a_1.tar.bz2#fc4e68d7201e728066bdf470ca42a007
 https://conda.anaconda.org/conda-forge/noarch/urllib3-1.26.5-pyhd8ed1ab_0.tar.bz2#36f0ca66d6dd09423e5c2551148d45cd
 https://conda.anaconda.org/conda-forge/linux-64/r-class-7.3_19-r40hcfec24a_0.tar.bz2#6298af638053f6db80114c264f88439c
@@ -188,7 +188,7 @@ https://conda.anaconda.org/conda-forge/linux-64/r-vctrs-0.3.8-r40hcfec24a_1.tar.
 https://conda.anaconda.org/conda-forge/noarch/r-pillar-1.6.1-r40hc72bb7e_0.tar.bz2#50d0e64e4f95477041f6fc79d0b90d03
 https://conda.anaconda.org/conda-forge/linux-64/r-pkgload-1.2.1-r40h03ef668_0.tar.bz2#2768e25027e69d34b0a049ff4b8d1a57
 https://conda.anaconda.org/conda-forge/noarch/r-recommended-4.0-r40hd8ed1ab_1004.tar.bz2#31ff637223ddb8258052c17278357ce0
-https://conda.anaconda.org/conda-forge/noarch/r-rmarkdown-2.8-r40hc72bb7e_0.tar.bz2#a24d85018c6557223ae5d4a8404d761d
+https://conda.anaconda.org/conda-forge/noarch/r-rmarkdown-2.9-r40hc72bb7e_0.tar.bz2#ed318d9c2334e00deeec1cc148a32f79
 https://conda.anaconda.org/conda-forge/linux-64/r-tidyselect-1.1.1-r40hc72bb7e_0.tar.bz2#0c31143f539e254e9d4b4981ef92b73c
 https://conda.anaconda.org/conda-forge/noarch/r-4.0-r40hd8ed1ab_1004.tar.bz2#652b77c50c2986cf2c869da78371ba01
 https://conda.anaconda.org/conda-forge/linux-64/r-tibble-3.1.2-r40hcfec24a_0.tar.bz2#fa3fe4687ae48a3f5dcb74844dd1fff4
