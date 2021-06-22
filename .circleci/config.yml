@@ -1,0 +1,16 @@
+version: 2.1
+
+# See https://circleci.com/orbs/registry/orb/circleci/gcp-gcr
+orbs:
+  gcp-gcr: circleci/gcp-gcr@0.11.0
+
+workflows:
+  version: 2.1
+  build-and-deploy:
+    jobs:
+      - gcp-gcr/build-and-push-image:
+          image: partybal
+          filters:
+            branches:
+              only:
+                main
