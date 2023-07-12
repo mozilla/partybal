@@ -117,3 +117,5 @@ plot_kernel_density_estimate <- function(df, metric, comparison, period, segment
     }
     g
 }
+
+plot_population_ratio <- function(...) { plot_mean(..., "population_ratio") }
