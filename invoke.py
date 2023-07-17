@@ -245,6 +245,8 @@ class Result:
     @classmethod
     def from_path(cls, path) -> "Result":
         data = pd.read_json(path)
+        if "comparison" not in data.columns:
+            data["comparison"] = "none"
         return cls(path, data)
 
     @property
