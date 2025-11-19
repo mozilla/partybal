@@ -1,3 +1,8 @@
+# ARCHIVED REPOSITORY
+> <div class="alert"><strong>Warning</strong></div>
+> This repository is no longer in use, and has been archived as of 2025-11-19.
+
+
 # party balloon
 
 it's like a pilot balloon, but unserious.
